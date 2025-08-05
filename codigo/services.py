@@ -12,6 +12,7 @@ class Relatorio:
         self.caminho2 = arquivo2
         self.LinkPathPTD = rf"{BASE_DIR}\{UPLOADCSV}\DPTDIA.csv"
         self.Concatena()
+        self.dias = self.Dias()
         self.departamento = pd.read_csv(self.LinkPathPTD, encoding="latin1")
         self.centros = self.CentroCustos()
         self.relatorio = pd.read_csv(
@@ -145,12 +146,12 @@ class Relatorio:
                 nova_linha[dia] = qtd
                 soma += qtd
             nova_linha["%"] = (
-                f"=SUM(({self.TakeIndex('Valor total')}{coluna}/{self.TakeIndex('Valor total')}{len(self.centros) + 2}) * 100)"
+                f"=SUM({self.TakeIndex('Valor total')}{coluna}/{self.TakeIndex('Valor total')}{len(self.centros) + 2})"
             )
             nova_linha["Total"] = (
                 f"=SUM({self.TakeIndex(self.dias[0])}{coluna}:{self.TakeIndex(self.dias[-1])}{coluna})"
             )
-            nova_linha["Valor total"] = f"={self.TakeIndex('Total')}{coluna} * 20"
+            nova_linha["Valor total"] = f"=${self.TakeIndex('Total')}${coluna} * 20"
             self.relatorio = pd.concat(
                 [self.relatorio, pd.DataFrame([nova_linha])], ignore_index=True
             )

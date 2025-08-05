@@ -18,3 +18,9 @@
 05-08-25 | 00:11:13 |  [Errno 13] Permission denied: 'UPLOADS\\UPLOAD_RELATORIOS\\REFEI합ES JANEIRO 2025 -29.30 E 311 - Copia.xltx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\REFEI합ES JANEIRO 2025 -29.30 E 311 - Copia.xltx 
 05-08-25 | 00:26:48 |  can only concatenate list (not "int") to list C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\REFEI합ES JANEIRO 2025 -29.30 E 311 - Copia.xltx 
 05-08-25 | 00:29:34 |  cannot access local variable 'coluna' where it is not associated with a value C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\REFEI합ES JANEIRO 2025 -29.30 E 311 - Copia.xltx 
+05-08-25 | 14:12:51 |  [Errno 13] Permission denied: 'UPLOADS\\UPLOAD_RELATORIOS\\ALMOCO-16_31.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\ALMOCO-16_31.xlsx 
+05-08-25 | 14:13:53 |  [Errno 13] Permission denied: 'UPLOADS\\UPLOAD_RELATORIOS\\ALMOCO-16_31.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\ALMOCO-16_31.xlsx 
+05-08-25 | 14:13:53 |  'Relatorio' object has no attribute 'dias' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\ALMOCO-16_31.xlsx 
+05-08-25 | 14:16:20 |  [Errno 13] Permission denied: 'UPLOADS\\UPLOAD_RELATORIOS\\ALMOCO-16_31.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\ALMOCO-16_31.xlsx 
+05-08-25 | 14:17:17 |  No columns to parse from file C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\ALMOCO-16_31.xlsx 
+05-08-25 | 14:39:52 |  [Errno 13] Permission denied: 'UPLOADS\\UPLOAD_RELATORIOS\\JANTA-16_31.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\UPLOADS\UPLOAD_RELATORIOS\JANTA-16_31.xlsx 
