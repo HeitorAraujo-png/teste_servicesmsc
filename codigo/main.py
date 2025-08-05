@@ -4,15 +4,16 @@ from watchdog.events import LoggingEventHandler
 from modulo import MyHandler
 from time import sleep
 import logging
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     logging.basicConfig(
-    filename=r"codigo\LOG\dev.log",
-    filemode="a",
-    level=logging.INFO,
-    format="%(asctime)s | %(process)d | %(message)s",
-    datefmt="%d-%m-%y %H:%M:%S",
+        filename=r"codigo\LOG\dev.log",
+        filemode="a",
+        level=logging.INFO,
+        format="%(asctime)s | %(process)d | %(message)s",
+        datefmt="%d-%m-%y %H:%M:%S",
     )
-    path = fr'{BASE_DIR}\{RELATORIO}'
+    path = rf"{BASE_DIR}\{RELATORIO}"
     log = LoggingEventHandler()
     event_handler = MyHandler()
     observer = Observer()
@@ -24,4 +25,4 @@ if __name__ == '__main__':
             sleep(1)
     except KeyboardInterrupt:
         observer.stop()
-        observer.join() 
+        observer.join()
