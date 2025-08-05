@@ -13,11 +13,9 @@ class MyHandler(FileSystemEventHandler):
                 path1 = rf"{settings.RELATORIO}\{str(path1)}"
                 path2 = rf"{settings.RELATORIO}\{str(path2)}"
                 try:
-                    print("tentou")
                     if path1.endswith(
                         ("xltx", "xls", "xlsm", ".xlsx")
                     ) and path2.endswith(("xltx", "xls", "xlsm", ".xlsx")):
-                        print("entrou")
                         relatorio = Relatorio(path1, path2)
                         relatorio.Concatena()
                         relatorio.Converte()

@@ -13,13 +13,13 @@ class Relatorio:
         self.LinkPathPTD = rf"{BASE_DIR}\{UPLOADCSV}\DPTDIA.csv"
         self.Concatena()
         self.departamento = pd.read_csv(self.LinkPathPTD, encoding="latin1")
-        self.dias = self.Dias()
         self.centros = self.CentroCustos()
         self.relatorio = pd.read_csv(
             rf"{BASE_DIR}\{UPLOADCSV}\relatorio.csv", encoding="latin1"
         )
 
     def Concatena(self):
+        """Concatena os dois arquivos .XLSX tranformando em um unico arquivo .CSV"""
         relatorio1 = pd.read_excel(self.caminho1, parse_dates=["DATA"])
         relatorio2 = pd.read_excel(self.caminho2, parse_dates=["DATA"])
         relatorio1["DATA"] = relatorio1["DATA"].dt.strftime("%d/%m/%y")
@@ -27,7 +27,8 @@ class Relatorio:
         self.departamento = pd.concat([relatorio1, relatorio2], ignore_index=True)
         self.departamento.to_csv(self.LinkPathPTD, encoding="latin1", index=False)
 
-    def Add(self):
+    def Adicionar(self):
+        """Adiciona os dias no arquivo .CSV que contem as principais informações"""
         with open(
             rf"{BASE_DIR}\{UPLOADCSV}\relatorio.csv", "r", encoding="latin1"
         ) as arq:
@@ -41,12 +42,23 @@ class Relatorio:
                     )
 
     def remove(self, lista):
+        """Remove itens duplicados de uma lista"""
         return list(dict.fromkeys(sorted(lista)))
 
     def Dias(self):
+        """Volta uma lista com todos os dias"""
         return self.remove(list(self.departamento["DATA"]))
 
     def TakeIndex(self, search):
+        """Pega index de coluna especifica\n
+    Exemplo: 
+        print(self.relatorio.columns.to_list()) vai voltar uma lista com todas as colunas do arquivo
+    ['dpt', '28/11/2024', '29/11/2024', '30/11/2024', 'Valor', 'Valor total', '%']
+    Vamos dizer que search = 'Valor total'
+    index = self.relatorio.columns.to_list().index(search)
+    print(index) >>> vai retornar 5
+    return result == 'F'
+        """
         index = self.relatorio.columns.to_list().index(search)
         result = ""
         while index >= 0:
@@ -55,6 +67,7 @@ class Relatorio:
         return result
 
     def CentroCustos(self):
+        """Classifica por ordem numerica cada centro e custo e adiciona os nomes dos mesmos"""
         centro = self.departamento["C.C"]
         centro = self.remove(list(centro))
         lista = []
@@ -90,7 +103,8 @@ class Relatorio:
         return lista
 
     def Converte(self):
-        self.Add()
+        """Converte o arquivo .CSV em .XLSX"""
+        self.Adicionar()
         coluna = 2
         atual = {"DPT": 0}
         for dia in self.dias:
@@ -147,12 +161,12 @@ class Relatorio:
         self.relatorio = pd.concat(
             [self.relatorio, pd.DataFrame([atual])], ignore_index=True
         )
-        print(rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
         self.relatorio.to_excel(
             rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx", index=False
         )
 
     def Espaco(self):
+        """Arruma o espaçamento de cada coluna do arquivo em excel"""
         wb = load_workbook(rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
         sheet = wb.sheetnames[0]
         ws = wb[sheet]
