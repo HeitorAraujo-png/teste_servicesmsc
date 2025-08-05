@@ -1,7 +1,7 @@
+from settings import *
 import pandas as pd
-import unicodedata
-import re
-import os
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
 
 class Relatorio:
     
@@ -9,31 +9,26 @@ class Relatorio:
         """Adicione o relatorio de 1 a 15 dias e de 15 a 31"""
         self.caminho1 = arquivo1
         self.caminho2 = arquivo2
-        print(self.caminho1, self.caminho2)
-        self.LinkPathPTD = os.path.join(settings.MEDIA_ROOT, 'DPTDIA.csv')
+        self.LinkPathPTD = fr'{BASE_DIR}\{UPLOADCSV}\DPTDIA.csv'
+        self.Concatena()
         self.departamento = pd.read_csv(self.LinkPathPTD, encoding='latin1')
-        self.Converter()
         self.dias = self.Dias()
         self.centros = self.CentroCustos()
-        self.relatorio = pd.read_csv((os.path.join(settings.BASIC_ROOT, 'relatorio.csv')), encoding='latin1')
+        self.relatorio = pd.read_csv(fr'{BASE_DIR}\{UPLOADCSV}\relatorio.csv', encoding='latin1')    
         
-        
-    def Converter(self):
-        caminho1 = default_storage.path(self.caminho1)
-        caminho2 = default_storage.path(self.caminho2)
-        relatorio1 = pd.read_excel(caminho1, parse_dates=["DATA"])
-        relatorio2 = pd.read_excel(caminho2, parse_dates=["DATA"])
+    def Concatena(self):
+        relatorio1 = pd.read_excel(self.caminho1, parse_dates=["DATA"])
+        relatorio2 = pd.read_excel(self.caminho2, parse_dates=["DATA"])
         relatorio1['DATA'] = relatorio1['DATA'].dt.strftime('%d/%m/%y')
         relatorio2['DATA'] = relatorio2['DATA'].dt.strftime('%d/%m/%y')
-        self.relatorio = pd.concat([relatorio1, relatorio2], ignore_index=True)
-        caminho_dptdia_csv = default_storage.path('DPTDIA.csv')
-        self.relatorio.to_csv(caminho_dptdia_csv, encoding='latin1', index=False)
+        self.departamento = pd.concat([relatorio1, relatorio2], ignore_index=True)
+        self.departamento.to_csv(self.LinkPathPTD, encoding='latin1', index=False)
 
 
     def Add(self):
-        with open((os.path.join(settings.BASIC_ROOT, 'relatorio.csv')), 'r', encoding='latin1') as arq:
+        with open(fr'{BASE_DIR}\{UPLOADCSV}\relatorio.csv', 'r', encoding='latin1') as arq:
             arq = arq.readlines()
-            with open((os.path.join(settings.BASIC_ROOT, 'relatorio.csv')), 'w', encoding='latin1') as csv:
+            with open(fr'{BASE_DIR}\{UPLOADCSV}\relatorio.csv', 'w', encoding='latin1') as csv:
                 for i in arq:
                     csv.write(f'{i[:i.find(',') + 1]}{','.join(self.dias)},{i[i.find('Total'):]}')
 
@@ -42,6 +37,14 @@ class Relatorio:
 
     def Dias(self):
         return self.remove(list(self.departamento['DATA']))
+    
+    def TakeIndex(self, search):
+        index = self.relatorio.columns.to_list().index(search)
+        result = ''
+        while index >= 0:
+            result = chr(index % 26 + 65) + result
+            index = index // 26 - 1
+        return result
 
     def CentroCustos(self):
         centro = self.departamento['C.C']
@@ -67,7 +70,7 @@ class Relatorio:
                 tipo = 'COMERCIA'
             if cc == '11':
                 tipo = 'OPEC'
-            if cc == '12':
+            if cc == '7':
                 tipo = 'MKT'
             if cc == '14':
                 tipo = 'PROGRAMAÇÃO'
@@ -76,25 +79,12 @@ class Relatorio:
             if cc == '21':
                 tipo = 'TECNOLOGIA'
             lista.append(f'{centro[i]} - {tipo} - {emp}')
-        return self.remove(lista)
+        return lista
 
-    def money(self):
-        money = 0
-        for cc in self.centros:
-            for i in range(0, 1):
-                nm = f'{''.join((cc[0], cc[1], cc[2], cc[3]))}'
-                cc = int(nm)
-            soma = 0
-            for dia in self.dias:
-                qtd = len(self.departamento[(self.departamento['C.C'] == cc) & (self.departamento['DATA'] == dia)])
-                soma += qtd
-            money += soma
-        return money
 
     def Converte(self):
         self.Add()
-        linhas = []
-        money = self.money()
+        coluna = 2
         atual = {'DPT': 0}
         for dia in self.dias:
             total_dia = 0
@@ -104,13 +94,9 @@ class Relatorio:
                     cc = int(nm)
                 qtd = len(self.departamento[(self.departamento['C.C'] == cc) & (self.departamento['DATA'] == dia)])
                 total_dia += qtd
-            atual[dia] = total_dia
-        total = 0
-        for i in atual:
-            total += atual[i]
-        atual['Total'] = total
-        atual['Valor total'] = f'{money * 20:.2f}'
-        pct = []
+            atual[dia] = f'=SUM({self.TakeIndex(dia)}{coluna}:{self.TakeIndex(dia)}{len(self.centros) + 1})'
+        atual['Valor total'] = f'=SUM({self.TakeIndex('Valor total')}{coluna}:{self.TakeIndex('Valor total')}{len(self.centros) + 1})'
+        atual['Total'] = f'=SUM({self.TakeIndex('Total')}{coluna}:{self.TakeIndex('Total')}{len(self.centros) + 1})'
         for cc in self.centros:
             nova_linha = {'DPT': cc}
             for i in range(0, 1):
@@ -121,16 +107,30 @@ class Relatorio:
                 qtd = len(self.departamento[(self.departamento['C.C'] == cc) & (self.departamento['DATA'] == dia)])
                 nova_linha[dia] = qtd
                 soma += qtd
-            valor = float(f'{(soma * 20) / float(atual['Valor total']):.3f}')
-            nova_linha['%'] = f'{valor}%'
-            pct.append(valor)
-            nova_linha['Total'] = soma
-            nova_linha['Valor total'] = f'R$ {soma * 20:.2f}'
+            nova_linha['%'] = f'=SUM(({self.TakeIndex('Valor total')}{coluna}/{self.TakeIndex('Valor total')}{len(self.centros) + 2}) * 100)'
+            nova_linha['Total'] = f'=SUM({self.TakeIndex(self.dias[0])}{coluna}:{self.TakeIndex(self.dias[-1])}{coluna})'
+            nova_linha['Valor total'] = f'={self.TakeIndex('Total')}{coluna} * 20'
             self.relatorio = pd.concat([self.relatorio, pd.DataFrame([nova_linha])], ignore_index=True)
-        
-        atual['%'] = f'%{sum(pct) * 100}'
+            coluna = coluna + 1
+        atual['%'] = f'=SUM({self.TakeIndex('%')}{2}:{self.TakeIndex('%')}{len(self.centros) + 1})'
         self.relatorio = pd.concat([self.relatorio, pd.DataFrame([atual])], ignore_index=True)
-        self.relatorio = pd.concat([self.relatorio, pd.DataFrame([linhas])], ignore_index=True)
-        self.relatorio.to_excel(os.path.join(settings.MEDIA_ROOT, 'relatorio_atualizado.xlsx'), index=False)
-        nome_saida = os.path.join(settings.MEDIA_ROOT, 'relatorio_atualizado.xlsx')
-        return f'/{nome_saida}'
+        print(fr'{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx')
+        self.relatorio.to_excel(fr'{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx', index=False)
+        
+    def Espaco(self):
+        wb = load_workbook(fr'{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx')
+        sheet = wb.sheetnames[0]
+        ws = wb[sheet]
+        for col in ws.columns:
+            max_l = 0
+            coluna = col[0].column
+            coluna_letra = get_column_letter(coluna)
+            for cell in col:
+                try:
+                    if cell.value:
+                        max_l = max(max_l, len(str(cell.value)))
+                except Exception as e:
+                    pass
+            ajuste = max_l + 2
+            ws.column_dimensions[coluna_letra].width = ajuste
+        wb.save(fr'{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx')
