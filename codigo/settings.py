@@ -1,6 +1,5 @@
 from datetime import datetime
 from os import getcwd
-from time import sleep
 time = datetime.now().strftime("%d-%m-%y | %H:%M:%S | ")
 BASE_DIR = getcwd()
 UPLOADCSV = r'UPLOADS\DOWNLOAD_RELATORIOS\csv'

@@ -2,6 +2,7 @@ from settings import *
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from modulo import MyHandler
+from time import sleep
 import logging
 if __name__ == '__main__':
     logging.basicConfig(
