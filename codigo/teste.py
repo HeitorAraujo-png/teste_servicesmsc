@@ -1,5 +1,5 @@
 from os import *
 from settings import BASE_DIR, RELATORIO
+from services import Relatorio
 
-if len(listdir(path.join(BASE_DIR, RELATORIO))) >= 2:
-    print("at")
+Relatorio().Adicionar()

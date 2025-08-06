@@ -1,3 +1,4 @@
+import os
 from settings import *
 import pandas as pd
 from openpyxl import load_workbook
@@ -6,41 +7,33 @@ from openpyxl.utils import get_column_letter
 
 class Relatorio:
 
-    def __init__(self, arquivo1, arquivo2):
+    def __init__(self, arquivos):
         """Adicione o relatorio de 1 a 15 dias e de 15 a 31"""
-        self.caminho1 = arquivo1
-        self.caminho2 = arquivo2
         self.LinkPathPTD = rf"{BASE_DIR}\{UPLOADCSV}\DPTDIA.csv"
-        self.Concatena()
+        self.Concatena(arquivos)
         self.dias = self.Dias()
         self.departamento = pd.read_csv(self.LinkPathPTD, encoding="latin1")
-        self.centros = self.CentroCustos()
-        self.relatorio = pd.read_csv(
-            rf"{BASE_DIR}\{UPLOADCSV}\relatorio.csv", encoding="latin1"
-        )
-
-    def Concatena(self):
+        self.nomes, self.centros = self.CentroCustos()
+        self.Adicionar()
+    
+    def Concatena(self, arquivos):
         """Concatena os dois arquivos .XLSX tranformando em um unico arquivo .CSV"""
-        relatorio1 = pd.read_excel(self.caminho1, parse_dates=["DATA"])
-        relatorio2 = pd.read_excel(self.caminho2, parse_dates=["DATA"])
-        relatorio1["DATA"] = relatorio1["DATA"].dt.strftime("%d/%m/%y")
-        relatorio2["DATA"] = relatorio2["DATA"].dt.strftime("%d/%m/%y")
-        self.departamento = pd.concat([relatorio1, relatorio2], ignore_index=True)
-        self.departamento.to_csv(self.LinkPathPTD, encoding="latin1", index=False)
+        self.departamento = pd.DataFrame()
+        for i in arquivos:
+            i = fr'{BASE_DIR}\{RELATORIO}\{i}'
+            relatorio = pd.read_excel(i, parse_dates=["DATA"])
+            relatorio["DATA"] = relatorio["DATA"].dt.strftime("%d/%m/%y")
+            self.departamento = pd.concat([self.departamento, relatorio], ignore_index=True)
+        self.departamento.to_csv(self.LinkPathPTD, encoding="latin1")
 
     def Adicionar(self):
         """Adiciona os dias no arquivo .CSV que contem as principais informações"""
-        with open(
-            rf"{BASE_DIR}\{UPLOADCSV}\relatorio.csv", "r", encoding="latin1"
-        ) as arq:
-            arq = arq.readlines()
-            with open(
-                rf"{BASE_DIR}\{UPLOADCSV}\relatorio.csv", "w", encoding="latin1"
-            ) as csv:
-                for i in arq:
-                    csv.write(
-                        f"{i[:i.find(',') + 1]}{','.join(self.dias)},{i[i.find('Total'):]}"
-                    )
+
+        colunas = ['DPT'] + self.dias + ['Total', 'Valor total', '%']
+        lista = {col: None for col in colunas}
+        self.relatorio = pd.DataFrame([lista])
+        self.relatorio = self.relatorio.drop(0)
+        self.relatorio.to_csv(fr'{BASE_DIR}\{UPLOADCSV}\relatorio.csv')
 
     def remove(self, lista):
         """Remove itens duplicados de uma lista"""
@@ -52,12 +45,10 @@ class Relatorio:
 
     def TakeIndex(self, search):
         """Pega index de coluna especifica\n
-    Exemplo: 
-        print(self.relatorio.columns.to_list()) vai voltar uma lista com todas as colunas do arquivo
-    ['dpt', '28/11/2024', '29/11/2024', '30/11/2024', 'Valor', 'Valor total', '%']
+    Exemplo: .to_list()) vai voltar uma lista com todas as colunas do arquivo
+    ['dpt', '28/11/2024', '29/11/2024', '30/11/2024', 'Total', 'Valor total', '%']
     Vamos dizer que search = 'Valor total'
-    index = self.relatorio.columns.to_list().index(search)
-    print(index) >>> vai retornar 5
+    index = self.relatorio.columns.to_list().index(search vai retornar 5
     return result == 'F'
         """
         index = self.relatorio.columns.to_list().index(search)
@@ -72,10 +63,10 @@ class Relatorio:
         centro = self.departamento["C.C"]
         centro = self.remove(list(centro))
         lista = []
-        for i in range(0, len(centro)):
-            pre = str(centro[i])
-            ic = f"{''.join((pre[0], pre[1]))}"
-            cc = f"{''.join((pre[2], pre[3]))}"
+        for i in centro:
+            i = str(i)
+            ic = f'{i[0]}{i[1]}'
+            cc = f'{i[2]}{i[3]}'
             if ic == "81":
                 emp = "TVCA"
             if ic == "65":
@@ -100,20 +91,16 @@ class Relatorio:
                 tipo = "JORNALISMO"
             if cc == "21":
                 tipo = "TECNOLOGIA"
-            lista.append(f"{centro[i]} - {tipo} - {emp}")
-        return lista
+            lista.append(f"{i} - {tipo} - {emp}")
+        return lista, centro
 
     def Converte(self):
         """Converte o arquivo .CSV em .XLSX"""
-        self.Adicionar()
         coluna = 2
         atual = {"DPT": 0}
         for dia in self.dias:
             total_dia = 0
             for cc in self.centros:
-                for i in range(0, 1):
-                    nm = f"{''.join((cc[0], cc[1], cc[2], cc[3]))}"
-                    cc = int(nm)
                 qtd = len(
                     self.departamento[
                         (self.departamento["C.C"] == cc)
@@ -130,11 +117,8 @@ class Relatorio:
         atual["Total"] = (
             f"=SUM({self.TakeIndex('Total')}{coluna}:{self.TakeIndex('Total')}{len(self.centros) + 1})"
         )
-        for cc in self.centros:
-            nova_linha = {"DPT": cc}
-            for i in range(0, 1):
-                nm = f"{''.join((cc[0], cc[1], cc[2], cc[3]))}"
-                cc = int(nm)
+        for cc, nome in zip(self.centros, self.nomes):
+            nova_linha = {"DPT": nome}
             soma = 0
             for dia in self.dias:
                 qtd = len(
@@ -163,14 +147,13 @@ class Relatorio:
             [self.relatorio, pd.DataFrame([atual])], ignore_index=True
         )
         self.relatorio.to_excel(
-            rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx", index=False
-        )
+                rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx", index=False)
 
     def Espaco(self):
         """Arruma o espaçamento de cada coluna do arquivo em excel"""
-        wb = load_workbook(rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
-        sheet = wb.sheetnames[0]
-        ws = wb[sheet]
+        self.wb = load_workbook(rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
+        sheet = self.wb.sheetnames[0]
+        ws = self.wb[sheet]
         for col in ws.columns:
             max_l = 0
             coluna = col[0].column
@@ -183,4 +166,13 @@ class Relatorio:
                     pass
             ajuste = max_l + 2
             ws.column_dimensions[coluna_letra].width = ajuste
-        wb.save(rf"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
+            self.Salva()
+        
+    def Salva(self):
+        hoje = datetime.now().strftime("%d-%m-%y-")
+        if os.path.exists((fr"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")):
+            self.wb.save(fr"{BASE_DIR}\{HISTORICO}\{hoje}relatorio_atualizado.xlsx")
+            self.relatorio.to_excel(
+                rf"{BASE_DIR}\{HISTORICO}\{hoje}relatorio_atualizado.xlsx", index=False)
+        else:
+            self.wb.save(fr"{BASE_DIR}\{UPLOADXLSX}\relatorio_atualizado.xlsx")
