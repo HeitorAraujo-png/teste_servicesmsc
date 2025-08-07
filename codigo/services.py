@@ -9,7 +9,7 @@ class Relatorio:
 
     def __init__(self, arquivos):
         """Adicione o relatorio de 1 a 15 dias e de 15 a 31"""
-        self.LinkPathPTD = rf"{BASE_DIR}\{UPLOADCSV}\DPTDIA.csv"
+        self.LinkPathPTD = rf"{BASE_DIR}{UPLOADCSV}\DPTDIA.csv"
         self.Concatena(arquivos)
         self.dias = self.Dias()
         self.departamento = pd.read_csv(self.LinkPathPTD, encoding="latin1")

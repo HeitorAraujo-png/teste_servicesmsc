@@ -21,34 +21,33 @@ class MyHandler(FileSystemEventHandler):
             self.last_events[event.src_path] = now
 
             ListaPath = []
-            if len(os.listdir(settings.RELATORIO)) >= 2:
-                ListaPath = os.listdir(settings.RELATORIO); ListaPath.remove('UPLOAD_PROCESSADOS')
+            if len(os.listdir(f'{settings.BASE_DIR}{settings.RELATORIO}')) >= 3:
+                ListaPath = [f for f in os.listdir(f'{settings.BASE_DIR}{settings.RELATORIO}') if f != 'UPLOAD_PROCESSADOS']
                 try:
                     relatorio = Relatorio(ListaPath)
                     relatorio.Converte()
                     relatorio.Espaco()
                     for i in ListaPath:
-                        reme = fr'{settings.RELATORIO}\{i}'
-                        dest = fr"{settings.UPLOAD_PROCESSADO}\{i}"
+                        reme = fr'{settings.BASE_DIR}{settings.RELATORIO}\{i}'
+                        dest = fr"{settings.BASE_DIR}{settings.UPLOAD_PROCESSADO}\{i}"
                         move(src=reme, dst=dest)
                 except Exception as e:
-                    print(e)
-                    if not os.path.exists(r"codigo\LOG\error.log"):
-                        with open(r"codigo\LOG\error.log", "x"):
-                            with open(r"codigo\LOG\error.log", "a") as log:
+                    if not os.path.exists(fr"{settings.BASE_DIR}\LOG\error.log"):
+                        with open(fr"{settings.BASE_DIR}\LOG\error.log", "x"):
+                            with open(fr"{settings.BASE_DIR}\LOG\error.log", "a") as log:
                                 log.write(f"{settings.time} {e} {event.src_path} \n")
                     else:
-                        with open(r"codigo\LOG\error.log", "a") as log:
+                        with open(fr"{settings.BASE_DIR}\LOG\error.log", "a") as log:
                             log.write(f"{settings.time} {e} {event.src_path} \n")
         else:
-            if not os.path.exists(r"codigo\LOG\error.log"):
-                with open(r"codigo\LOG\error.log", "x"):
-                    with open(r"codigo\LOG\error.log", "a") as log:
+            if not os.path.exists(fr"{settings.BASE_DIR}\LOG\error.log"):
+                with open(fr"{settings.BASE_DIR}\LOG\error.log", "x"):
+                    with open(fr"{settings.BASE_DIR}\LOG\error.log", "a") as log:
                         log.write(
-                            f"{settings.time}  Novo diretorio detectado! {event.src_path} \n"
+                            f"{settings.time} Novo diretorio detectado! {event.src_path} \n"
                         )
             else:
-                with open(r"codigo\LOG\error.log", "a") as log:
+                with open(fr"{settings.BASE_DIR}\LOG\error.log", "a") as log:
                     log.write(
                         f"{settings.time} Novo diretorio detectado! {event.src_path} \n"
                     )
