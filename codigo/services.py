@@ -110,10 +110,7 @@ class Relatorio:
             nova_linha = {"DPT": nome}
             soma = 0
             for dia in self.dias:
-                qtd = len(
-                    self.departamento[
-                        (self.departamento["C.C"] == cc)
-                        & (self.departamento["DATA"] == dia)])
+                qtd = len(self.departamento[(self.departamento["C.C"] == cc) & (self.departamento["DATA"] == dia)])
                 nova_linha[dia] = qtd
                 soma += qtd
             nova_linha["%"] = (f"=SUM({self.TakeIndex('Valor total')}{coluna}/{self.TakeIndex('Valor total')}{len(self.centros) + 2})")
