@@ -1,16 +1,20 @@
 from openpyxl import load_workbook
 from datetime import datetime
-# from shutil import move
+from shutil import move
 import pandas as pd
 from path import *
 from db import *
+import calendar
+import datetime
 import logging
+import os
 
 
 class Querys:
 
     def __init__(self):
         self.util = Utils
+        self.POG()
         
     
     def Concatena(arquivos):
@@ -31,13 +35,6 @@ class Querys:
         session.add(pessoa)
         session.commit()
 
-    def Lista_Dias(self):
-        lista = []
-        query = session.query(Pessoa).order_by("dia")
-        for i in query:
-            lista.append(i.dia)
-        self.dias = self.util.remove(lista)
-        return self.dias
 
     def Centro_Custos(self):
         lista = []
@@ -52,44 +49,41 @@ class Querys:
         return num.count()
 
     def Nomeclatura(self, cc):
-        csv = pd.read_csv("nomeclatura.csv", sep="|", encoding="latin1")
+        csv = pd.read_csv(fr"{BASE_DIR}\nomeclatura.csv", sep="|", encoding="latin1")
         for dpt, nome in zip(csv.DPT, csv.nome):
             if dpt == cc:
                 return f"{dpt} - {nome}"
 
     def NomeMes(self, data):
-        csv = pd.read_csv("nomeclatura.csv", sep="|", encoding="latin1")
+        csv = pd.read_csv(fr"{BASE_DIR}\nomeclatura.csv", sep="|", encoding="latin1")
         for mes, nome in zip(csv.mes, csv.NomeMes):
-            mes = f"0{int(mes)}" if mes < 10 else int(mes)
+            mes = int(mes) if mes > 9 else f'0{int(mes)}'
             if mes == data:
+                
                 return nome
         self.util.Log("Erro ao criar arquivo ")
 
-    def Mes_Ano(self):
-        lista = self.Lista_Dias()
-        ano = lista[0][6:]
-        mes = lista[0][3:-3]
-        return mes, ano
-
     def MakeCSV(self):
-        mes, ano = self.Mes_Ano()
+        self.POG()
         arquivo = pd.DataFrame()
-        nome = f"Relatorio{self.NomeMes(mes)}"
+        nome = f"Relatorio-{self.NomeMes(self.mes_atual)}"
+        nome_anterior =  f"Relatorio-{self.NomeMes(self.mes_anterior)}"
         self.path = fr"{BASE_DIR}{UPLOADCSV}\{nome}.csv"
         self.xlsx = fr"{BASE_DIR}{UPLOADXLSX}\{nome}.xlsx"
+        xlsx_anterior = fr"{BASE_DIR}{UPLOADXLSX}\{nome_anterior}.xlsx"
         arquivo.to_csv(self.path, index=False, encoding='latin1')
-        return self.path, self.xlsx
+        return self.path, self.xlsx, xlsx_anterior, nome_anterior
 
         
     def TakeIndex(self, search):
-            csv = pd.read_csv(self.path)
-            index = csv.columns.to_list().index(search)
-            result = ""
-            while index >= 0:
-                result = chr(index % 26 + 65) + result
-                index = index // 26 - 1
-            return result
-        
+        csv = pd.read_csv(self.path)
+        index = csv.columns.to_list().index(search)
+        result = ""
+        while index >= 0:
+            result = chr(index % 26 + 65) + result
+            index = index // 26 - 1
+        return result
+    
     def Linhas(self):
         colunas = ["DPT"] + self.dias + ["Total", "Valor total", "%"]
         lista = {col: None for col in colunas}
@@ -109,7 +103,23 @@ class Querys:
     def Salva(self):
         # hoje = datetime.now().strftime("%d-%m-%y-")
         self.wb.save(self.xlsx)
-    
+
+    def POG(self):
+        self.mes_atual = int(datetime.datetime.now().strftime('%m'))
+        self.ano = int(datetime.datetime.now().strftime('%y'))
+        if int(datetime.datetime.now().strftime('%m')) > 0:
+            self.mes_anterior =  int(datetime.datetime.now().strftime('%m')) - 1 
+        else:
+            self.mes_anterior = 12
+            self.ano -= 1
+        max_dia_atual = calendar.monthrange(self.ano, self.mes_atual)[1]
+        max_dia_anterior = calendar.monthrange(self.ano, self.mes_anterior)[1]
+        self.mes_atual = self.mes_atual if self.mes_atual> 9 else f'0{self.mes_atual}'
+        self.mes_anterior = self.mes_anterior if self.mes_anterior> 9 else f'0{self.mes_anterior}'
+        self.dias = ([f'{dia}/{self.mes_atual}/{self.ano}' if dia > 9 else f'0{dia}/{self.mes_atual}/{self.ano}' for dia  in range(1, max_dia_anterior + 1)])
+        self.dias_anterior = ([f'{dia}/{self.mes_anterior}/{self.ano}' if dia > 9 else f'0{dia}/{self.mes_anterior}/{self.ano}' for dia  in range(1, max_dia_atual + 1)])
+        return self.dias, self.dias_anterior
+
     def Drop(self):
         sql = pd.read_sql('SELECT * FROM Pessoas', session.bind)
         sql.to_csv(fr'{BASE_DIR}{UPLOADCSV}\Db-{datetime.now().strftime('%d-%m-%Y')}.csv')

@@ -1,0 +1,19 @@
+19-08-25 01:37:23 | 15680 | Monitorando o diretorio: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\..\ARQUIVOS\UPLOAD_RELATORIOS
+19-08-25 01:37:29 | 15680 | Created file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:29 | 18920 | Created file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:42 | 15680 | [Errno 2] No such file or directory: 'C:\\Users\\heito\\REPO\\Watchdog_servicesmsc\\teste_servicesmsc\\codigo\\..\\ARQUIVOS\\DOWNLOAD_RELATORIOS\\xlsx\\Relatorio-Julho.xlsx'
+19-08-25 01:37:45 | 18920 | <module 'time' (built-in)> Destination path 'C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\..\ARQUIVOS\UPLOAD_RELATORIOS\UPLOAD_PROCESSADOS\ALMOCO-1_15 - Copia - Copia.xlsx' already exists C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:45 | 18920 | Modified file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:45 | 18920 | <module 'time' (built-in)> [Errno 2] No such file or directory: 'C:\\Users\\heito\\REPO\\Watchdog_servicesmsc\\teste_servicesmsc\\codigo\\\\..\\ARQUIVOS\\UPLOAD_RELATORIOS\\ALMOCO-1_15 - Copia - Copia.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:45 | 18920 | Modified file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:45 | 18920 | Deleted file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:45 | 18920 | <module 'time' (built-in)> Novo diretorio detectado! C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\UPLOAD_PROCESSADOS
+19-08-25 01:37:45 | 18920 | Modified directory: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\UPLOAD_PROCESSADOS
+19-08-25 01:37:48 | 15680 | Modified file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:48 | 15680 | <module 'time' (built-in)> [Errno 2] No such file or directory: 'C:\\Users\\heito\\REPO\\Watchdog_servicesmsc\\teste_servicesmsc\\codigo\\\\..\\ARQUIVOS\\UPLOAD_RELATORIOS\\ALMOCO-1_15 - Copia - Copia.xlsx' C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:48 | 15680 | Modified file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:48 | 15680 | Deleted file: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\ALMOCO-1_15 - Copia - Copia.xlsx
+19-08-25 01:37:48 | 15680 | <module 'time' (built-in)> Novo diretorio detectado! C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\UPLOAD_PROCESSADOS
+19-08-25 01:37:48 | 15680 | Modified directory: C:\Users\heito\REPO\Watchdog_servicesmsc\teste_servicesmsc\codigo\\..\ARQUIVOS\UPLOAD_RELATORIOS\UPLOAD_PROCESSADOS
+19-08-25 01:39:03 | 15680 | Serviço encerrado com sucesso.
+19-08-25 01:39:08 | 18920 | Serviço encerrado com sucesso.

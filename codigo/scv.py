@@ -1,15 +1,23 @@
 from Utilidades import *
 import pandas as pd
+import os
 
 
 class Xlsx:
     
     def __init__(self):
         query = Querys()
-        path, xlsx = query.MakeCSV()
+        path, xlsx, xlsx_anterior, nome_anterior = query.MakeCSV()
+        try:
+            ReadXlsx = pd.read_excel(xlsx_anterior)
+            if all(dias in ReadXlsx.columns.to_list() for dias in Lista_dia_anterior):
+                move(src=xlsx_anterior, dst=fr'{BASE_DIR}{HISTORICO}\{nome_anterior}')
+        except Exception as ex:
+            Utils.Log(ex)
+            
         colunas = query.Linhas()
         arquivo = pd.read_csv(path)
-        Lista_dia = query.Lista_Dias()
+        Lista_dia, Lista_dia_anterior = query.POG()
         Lista_cc = query.Centro_Custos()
         # * CRIA O NOMES DO CENTRO E A QUANTIDADES
         # ! CRIA O PRINCIPAL DO ARQUIVO!

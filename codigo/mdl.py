@@ -4,6 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 from shutil import move
 import pandas as pd
+from scv import Xlsx
 from path import *
 import time
 
@@ -31,6 +32,7 @@ class Handler(FileSystemEventHandler):
                     hora = hora[7:12]
                     query.Create(CenCus=cc, day=dia, hora=hora, cd=codigo)
                 move(src=event.src_path, dst=f'{BASE_DIR}{UPLOAD_PROCESSADO}')
+                Xlsx()
             except Exception as e:
                 Utils.Log(f"{time} {e} {event.src_path}")
         else:
