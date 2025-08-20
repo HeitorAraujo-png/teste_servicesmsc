@@ -64,10 +64,11 @@ class Querys:
         self.util.Log("Erro ao criar arquivo ")
 
     def MakeCSV(self):
+        '''retorna o path dos arquivo CSV, XLSX e XLSX do mes anterior e o nome do relatorio do mes anterior'''
         self.POG()
         arquivo = pd.DataFrame()
-        nome = f"Relatorio-{self.NomeMes(self.mes_atual)}"
-        nome_anterior =  f"Relatorio-{self.NomeMes(self.mes_anterior)}"
+        nome = f"Relatorio-{self.NomeMes(self.mes_atual)}" # Relatorio-agosto
+        nome_anterior =  f"Relatorio-{self.NomeMes(self.mes_anterior)}" # relatorio-julho
         self.path = fr"{BASE_DIR}{UPLOADCSV}\{nome}.csv"
         self.xlsx = fr"{BASE_DIR}{UPLOADXLSX}\{nome}.xlsx"
         xlsx_anterior = fr"{BASE_DIR}{UPLOADXLSX}\{nome_anterior}.xlsx"
@@ -105,18 +106,18 @@ class Querys:
         self.wb.save(self.xlsx)
 
     def POG(self):
-        self.mes_atual = int(datetime.datetime.now().strftime('%m'))
+        self.mes_atual = int(datetime.datetime.now().month)
         self.ano = int(datetime.datetime.now().strftime('%y'))
-        if int(datetime.datetime.now().strftime('%m')) > 0:
-            self.mes_anterior =  int(datetime.datetime.now().strftime('%m')) - 1 
-        else:
+        self.mes_anterior =  self.mes_atual - 1 
+        if self.mes_anterior == 0:
             self.mes_anterior = 12
-            self.ano -= 1
         max_dia_atual = calendar.monthrange(self.ano, self.mes_atual)[1]
-        max_dia_anterior = calendar.monthrange(self.ano, self.mes_anterior)[1]
         self.mes_atual = self.mes_atual if self.mes_atual> 9 else f'0{self.mes_atual}'
-        self.mes_anterior = self.mes_anterior if self.mes_anterior> 9 else f'0{self.mes_anterior}'
         self.dias = ([f'{dia}/{self.mes_atual}/{self.ano}' if dia > 9 else f'0{dia}/{self.mes_atual}/{self.ano}' for dia  in range(1, max_dia_anterior + 1)])
+        if self.mes_anterior == 1:
+            self.ano -= 1
+        max_dia_anterior = calendar.monthrange(self.ano, self.mes_anterior)[1]
+        self.mes_anterior = self.mes_anterior if self.mes_anterior> 9 else f'0{self.mes_anterior}'
         self.dias_anterior = ([f'{dia}/{self.mes_anterior}/{self.ano}' if dia > 9 else f'0{dia}/{self.mes_anterior}/{self.ano}' for dia  in range(1, max_dia_atual + 1)])
         return self.dias, self.dias_anterior
 
